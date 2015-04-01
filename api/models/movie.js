@@ -10,15 +10,15 @@ var Movie = module.exports = function Movie(_node) {
 // public instance properties:
 
 Object.defineProperty(Movie.prototype, 'id', {
-    get: function () { return this._node.id; }
+    get: function () { return this._node._id; }
 });
 
 Object.defineProperty(Movie.prototype, 'title', {
     get: function () {
-        return this._node.data['title'];
+        return this._node.properties['title'];
     },
     set: function (title) {
-        this._node.data['title'] = title;
+        this._node.properties['title'] = title;
     }
 });
 
@@ -53,13 +53,44 @@ Movie.prototype.del = function (callback) {
     });
 };
 
+Movie.prototype.addRating = function (user, stars, comment, callback) {
+    var query = [
+        'MATCH (u:User) WHERE ID(u) = {userid}',
+        'MATCH (m:Movie) WHERE ID(m) = {movieid}',
+        'CREATE (u)-[:RATED {stars: {stars}, comment: {comment}}]->(m)'
+    ].join('\n');
+
+    db.cypher({
+        query: query,
+        params: {
+            userid: user.id,
+            movieid: this.id,
+            stars: stars,
+            comment: comment
+        },
+    }, function (err, results) {
+        if (err) return callback(err);
+
+        console.log("Add rating: ");
+        console.log(results);
+
+        callback(null, results);
+    });
+};
+
 
 // static methods:
 
 Movie.get = function (id, callback) {
-    db.getNodeById(id, function (err, node) {
-        if (err) return callback(err);
-        callback(null, new Movie(node));
+    db.cypher({
+        query: 'MATCH (movie:Movie {id: {id}}) RETURN movie',
+        params: {
+            id: id
+        },
+    }, function (err, results) {
+      if (err) return callback(err);
+        var movie = new Movie(results[0]['movie']);
+        callback(null, movie);
     });
 };
 
@@ -70,7 +101,8 @@ Movie.getAll = function (limit, callback) {
             limit: limit
         },
     }, function (err, results) {
-      if (err) return callback(err);
+        if (err) return callback(err);
+
         var movies = results.map(function (result) {
             return new Movie(result['movie']);
         });
