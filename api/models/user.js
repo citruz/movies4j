@@ -1,5 +1,6 @@
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase('http://neo4j:neo5j@localhost:7474');
+var _ = require('underscore');
 
 // private constructor:
 
@@ -20,6 +21,10 @@ Object.defineProperty(User.prototype, 'name', {
     set: function (name) {
         this._node.properties['name'] = name;
     }
+});
+
+Object.defineProperty(User.prototype, 'properties', {
+    get: function() { return _.extend(this._node.properties,{id: this._node._id}); }
 });
 
 // public instance methods:
@@ -61,8 +66,8 @@ User.prototype.getFriends = function (callback) {
         },
     }, function (err, results) {
 		if (err) return callback(err);
-		
 		console.log(results);
+
         var users = results.map(function (result) {
             return new User(result['friend']);
         });
@@ -80,9 +85,14 @@ User.get = function (id, callback) {
             id: parseInt(id)
         }
     }, function (err, results) {
-      if (err) return callback(err);
-        var user = new User(results[0]['user']);
-        callback(null, user);
+        if (err) return callback(err);
+
+        if (Array.isArray(results) && results.length > 0) {
+            var user = new User(results[0]['user']);
+            callback(null, user);
+        } else {
+            callback(null, null);
+        }
     });
 };
 
@@ -108,10 +118,30 @@ User.getByName = function (name, callback) {
             name: name
         }
     }, function (err, results) {
-      if (err) return callback(err);
-        var user = new User(results[0]['user']);
+        if (err) return callback(err);
         console.log(results);
-        callback(null, user);
+
+        if (Array.isArray(results) && results.length > 0) {
+            var user = new User(results[0]['user']);
+            callback(null, user);
+        } else {
+            callback(null, null);
+        }
+    });
+};
+User.search = function (name, callback) {
+    name = '.*'+name+'.*';
+    db.cypher({
+        query: 'MATCH (user:User) WHERE user.name =~ {name} RETURN user',
+        params: {
+            name: name
+        },
+    }, function (err, results) {
+      if (err) return callback(err);
+        var users = results.map(function (result) {
+            return new User(result['user']);
+        });
+        callback(null, users);
     });
 };
 

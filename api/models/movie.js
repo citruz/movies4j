@@ -1,5 +1,6 @@
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase('http://neo4j:neo5j@localhost:7474');
+var _ = require('underscore');
 
 // private constructor:
 
@@ -20,6 +21,10 @@ Object.defineProperty(Movie.prototype, 'title', {
     set: function (title) {
         this._node.properties['title'] = title;
     }
+});
+
+Object.defineProperty(Movie.prototype, 'properties', {
+    get: function() { return _.extend(this._node.properties,{id: this._node._id}); }
 });
 
 // public instance methods:
@@ -111,8 +116,9 @@ Movie.getAll = function (limit, callback) {
 };
 
 Movie.search = function (title, callback) {
+    title = '.*'+title+'.*';
     db.cypher({
-        query: 'MATCH (movie:Movie {title: {title}}) RETURN movie',
+        query: 'MATCH (movie:Movie) WHERE movie.title =~ {title} RETURN movie ORDER BY movie.title',
         params: {
             title: title
         },

@@ -11,13 +11,22 @@ var methodOverride = require('method-override');
 app.use(bodyParser.json());
 app.use(methodOverride());
 
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    next();
+}
+app.use(allowCrossDomain);
+
 app.get('/movies', function(req, res, next) {
 
   Movie.getAll(200, function (err, movies) {
       if (err) return next(err);
 
       res.json(movies.map(function(movie) {
-        return movie._node.properties;
+        return movie.properties;
       }));
 
   });
@@ -29,7 +38,7 @@ app.get('/movies/search', function(req, res, next) {
   Movie.search(req.query.q, function (err, movies) {
       if (err) return next(err);
       res.json(movies.map(function(movie) {
-        return movie._node.properties;
+        return movie.properties;
       }));
   });
   
@@ -62,7 +71,7 @@ app.get('/users/:id/friends', function(req, res, next) {
 		user.getFriends(function (err, friends) {
 			if (err) return next(err);
 			res.json(friends.map(function(friend) {
-				return friend._node.properties;
+				return friend.properties;
 			}));
 		});
 	});
@@ -74,17 +83,30 @@ app.post('/users', function(req, res, next) {
 		res.statusCode = 400;
 		return res.send('Error 400: Post syntax incorrect.');
 	}
-	User.create(req.body.username, function (err, user) {
-		if (err) return next(err);
-		res.json(user._node.properties);
-	});
+  User.getByName(req.body.username, function (err, user) {
+    if (err) return next(err);
+
+    if (user) {
+      res.json(user.properties);
+    } else {
+      User.create(req.body.username, function (err, user) {
+        if (err) return next(err);
+        res.json(user.properties);
+      }); 
+    }
+  });
+
+	
 });
 
 app.get('/users/search', function(req, res, next) {
   console.log(req.query.q);
-  User.getByName(req.query.q, function (err, user) {
+  User.search(req.query.q, function (err, users) {
       if (err) return next(err);
-      res.json(user._node.properties);
+
+      res.json(users.map(function(user) {
+        return user.properties;
+      }));
   });
   
 });
@@ -95,9 +117,9 @@ app.post('/users/:userid/friends/:friendid', function(req, res, next) {
 	User.get(userid, function (err, user) {
 		if (err) return next(err);
 		
-		user.setFriend(userid, friendid,(function (err, friend) {
+		user.setFriend(userid, friendid,function (err, friend) {
 			if (err) return next(err);
-			res.json(friend._node.properties);
+			res.json(friend.properties);
 		});
 	});
 	

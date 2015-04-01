@@ -1,0 +1,60 @@
+<div class="row">
+
+  <div class="col-md-3">
+    <ul class="nav nav-pills nav-stacked" id="myTabs">
+      <li class="active"><a href="#home">Recommendations</a></li>
+      <li><a href="#friends">Friends</a></li>
+      <li><a href="#movies">Movies</a></li>
+    </ul>
+  </div>
+
+  <div class="col-md-9">
+    <div class="tab-content">
+      <div class="tab-pane active" id="home">
+
+
+      </div>
+      <div class="tab-pane" id="friends">
+        <h3>My Friends</h3>
+        <ul>
+          <li ng-repeat="friend in friends">{{friend.name}}</li>
+        </ul>
+
+        <h3>Add Friend</h3>
+        <div class="input-group">
+          <input type="text" ng-change="searchFriends()" ng-model="friendSearchName" class="form-control"></input><div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
+        </div>
+        <div class="list-group">
+          <a ng-repeat="friend in friendsearch" class="list-group-item" ng-click="addFriend(friend)" href="#">{{friend.name}}</a>
+        </div>
+      </div>
+      
+
+      <div class="tab-pane" id="movies">
+        <h3>My Ratings</h3>
+        <ul>
+          <li ng-repeat="movie in movies">{{movie.title}}</li>
+        </ul>
+
+        <h3>Rate Movie</h3>
+        <div class="input-group">
+          <input type="text" ng-change="searchMovies()" ng-model="movieSearchTitle" class="form-control"></input><div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
+        </div>
+        <div class="list-group">
+          <a ng-repeat="movie in moviesearch" class="list-group-item" ng-click="" href="#">
+            <img src="http://img.omdbapi.com/?i={{movie.imdbId}}&apikey=ee8796c8&h=150" />
+            {{movie.title}}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script type="text/javascript">
+  $('#myTabs a').click(function (e) {
+    e.preventDefault()
+    $(this).tab('show')
+  });
+</script>

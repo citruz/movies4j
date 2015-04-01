@@ -26,7 +26,7 @@ moviesApp.config(['$routeProvider',
 
 moviesApp.run(function($rootScope, $location) {
     $rootScope.$on( "$routeChangeStart", function(event, next, current) {
-      if ($rootScope.loggedInUser == null) {
+      if ($rootScope.user == null) {
         // no logged user, redirect to /login
         if ( next.templateUrl === "templates/login.html") {
         } else {

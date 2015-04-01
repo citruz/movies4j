@@ -16,6 +16,7 @@
             <div class="brand">Movies4j - The worlds leading Movie Recommendation Engine</div>
           </a>
         </div>
+        <p class="navbar-text navbar-right" ng-if="user != null">Signed in as {{user.name}} <a ng-click="logout()" ng-controller="MainCtrl" href="#">Logout</a></p>
       </div>
     </div>
     <div class="container">
