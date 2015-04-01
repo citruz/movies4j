@@ -40,7 +40,7 @@ app.post('/movies/:id/ratings', function(req, res, next) {
     res.statusCode = 400;
     return res.send('Error 400: Post syntax incorrect.');
   } 
-  var user = User.getByName(req.body.user, function (err, user) {
+  User.getByName(req.body.user, function (err, user) {
     if (err) return next(err);
 
     Movie.get(req.params.id, function (err, movie) {
@@ -53,9 +53,20 @@ app.post('/movies/:id/ratings', function(req, res, next) {
       });
     });
   });
+});
 
-  
-  
+app.get('/users/:id/friends', function(req, res, next) {
+	User.get(req.params.id, function (err, user) {
+		if (err) return next(err);
+		
+		user.getFriends(function (err, friends) {
+			if (err) return next(err);
+			res.json(friends.map(function(friend) {
+				return friend._node.properties;
+			}));
+		});
+	});
+	
 });
 
 app.listen(process.env.PORT || 8000);

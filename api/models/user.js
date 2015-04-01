@@ -53,14 +53,31 @@ User.prototype.del = function (callback) {
     });
 };
 
+User.prototype.getFriends = function (callback) {
+	db.cypher({
+        query: 'MATCH (n:User)-[:FRIEND]->(friend:User) WHERE ID(n)={id} return friend',
+        params: {
+            id: this.id
+        },
+    }, function (err, results) {
+		if (err) return callback(err);
+		
+		console.log(results);
+        var users = results.map(function (result) {
+            return new User(result['friend']);
+        });
+        callback(null, users);
+    });
+	
 
+};
 // static methods:
 
 User.get = function (id, callback) {
     db.cypher({
-        query: 'MATCH (user:User {id: {id}}) RETURN user',
+        query: 'MATCH (user:User) WHERE ID(user)={id} RETURN user',
         params: {
-            id: id
+            id: parseInt(id)
         },
     }, function (err, results) {
       if (err) return callback(err);
