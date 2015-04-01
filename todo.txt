@@ -1,0 +1,5 @@
+- GET /users/?q=Dr.Seele
+- POST /users/:userid/friends/:friendId
+- GET /users/:userid/ratings 
+- GET /users/:userid/similiarMovies (Leuten denen diese Filme gefallen haben, haben auch gefallen:)
+- GET /users/:userid/friendsMovies (Filme, die deine Freunden gefallen:)
