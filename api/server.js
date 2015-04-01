@@ -80,4 +80,28 @@ app.post('/users', function(req, res, next) {
 	});
 });
 
+app.get('/users/search', function(req, res, next) {
+  console.log(req.query.q);
+  User.getByName(req.query.q, function (err, user) {
+      if (err) return next(err);
+      res.json(user._node.properties);
+  });
+  
+});
+
+app.post('/users/:userid/friends/:friendid', function(req, res, next) {
+	var userid = req.params.userid;
+	var friendid = req.params.friendid;
+	User.get(userid, function (err, user) {
+		if (err) return next(err);
+		
+		user.setFriend(userid, friendid,(function (err, friend) {
+			if (err) return next(err);
+			res.json(friend._node.properties);
+		});
+	});
+	
+});
+
+
 app.listen(process.env.PORT || 8000);

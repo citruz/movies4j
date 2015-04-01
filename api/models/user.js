@@ -128,3 +128,18 @@ User.create = function (name, callback) {
         callback(null, user);
     });
 };
+
+User.setFriend = function (ida, idb, callback) {
+	db.cypher({
+		query: 'MATCH (a:User),(b:User) CREATE (a)-[r:KNOWS]->(b) WHERE ID(a)={ida} AND ID(b)={idb} RETURN r',
+		params: {
+			ida: parseInt(ida),
+			idb: parseInt(idb)			
+		}
+	}, function (err, results) {
+      if (err) return callback(err);
+        var user = new User(results[0]['user']);
+        console.log(results);
+        callback(null, user);
+    });
+}
