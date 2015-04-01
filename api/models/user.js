@@ -53,15 +53,32 @@ User.prototype.del = function (callback) {
     });
 };
 
+User.prototype.getFriends = function (callback) {
+	db.cypher({
+        query: 'MATCH (n:User)-[:FRIEND]->(friend:User) WHERE ID(n)={id} return friend',
+        params: {
+            id: this.id
+        },
+    }, function (err, results) {
+		if (err) return callback(err);
+		
+		console.log(results);
+        var users = results.map(function (result) {
+            return new User(result['friend']);
+        });
+        callback(null, users);
+    });
+	
 
+};
 // static methods:
 
 User.get = function (id, callback) {
     db.cypher({
-        query: 'MATCH (user:User {id: {id}}) RETURN user',
+        query: 'MATCH (user:User) WHERE ID(user)={id} RETURN user',
         params: {
-            id: id
-        },
+            id: parseInt(id)
+        }
     }, function (err, results) {
       if (err) return callback(err);
         var user = new User(results[0]['user']);
@@ -74,7 +91,7 @@ User.getAll = function (limit, callback) {
         query: 'MATCH (user:User) RETURN user LIMIT {limit}',
         params: {
             limit: limit
-        },
+        }
     }, function (err, results) {
       if (err) return callback(err);
         var users = results.map(function (result) {
@@ -89,7 +106,7 @@ User.getByName = function (name, callback) {
         query: 'MATCH (user:User {name: {name}}) RETURN user',
         params: {
             name: name
-        },
+        }
     }, function (err, results) {
       if (err) return callback(err);
         var user = new User(results[0]['user']);
@@ -97,28 +114,17 @@ User.getByName = function (name, callback) {
         callback(null, user);
     });
 };
-// creates the user and persists (saves) it to the db, incl. indexing it:
-User.create = function (data, callback) {
-    // construct a new instance of our class with the data, so it can
-    // validate and extend it, etc., if we choose to do that in the future:
-    var node = db.createNode(data);
-    var user = new User(node);
 
-    // but we do the actual persisting with a Cypher query, so we can also
-    // apply a label at the same time. (the save() method doesn't support
-    // that, since it uses Neo4j's REST API, which doesn't support that.)
-    var query = [
-        'CREATE (user:User {data})',
-        'RETURN user',
-    ].join('\n');
-
-    var params = {
-        data: data
-    };
-
-    db.query(query, params, function (err, results) {
-        if (err) return callback(err);
+User.create = function (name, callback) {
+   db.cypher({
+		query: 'CREATE (user:User {name: {name}}) RETURN user',
+		params: {
+			name: name
+		},
+	}, function (err, results) {
+      if (err) return callback(err);
         var user = new User(results[0]['user']);
+        console.log(results);
         callback(null, user);
     });
 };
