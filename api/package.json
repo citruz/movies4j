@@ -1,0 +1,22 @@
+{
+  "name": "movies4-rest-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.12.2",
+    "express": "^4.12.3",
+    "neo4j": "^2.0.0-RC1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/citruz/movies4j"
+  },
+  "author": "",
+  "license": " ",
+  "bugs": {
+    "url": "https://github.com/citruz/movies4j/issues"
+  },
+  "homepage": "https://github.com/citruz/movies4j"
+}
