@@ -69,4 +69,15 @@ app.get('/users/:id/friends', function(req, res, next) {
 	
 });
 
+app.post('/users', function(req, res, next) {
+	if(!req.body.hasOwnProperty('username')) {
+		res.statusCode = 400;
+		return res.send('Error 400: Post syntax incorrect.');
+	}
+	User.create(req.body.username, function (err, user) {
+		if (err) return next(err);
+		res.json(user._node.properties);
+	});
+});
+
 app.listen(process.env.PORT || 8000);
