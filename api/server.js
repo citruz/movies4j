@@ -125,5 +125,33 @@ app.post('/users/:userid/friends/:friendid', function(req, res, next) {
 	
 });
 
+app.get('/users/:userid/similarMovies', function(req, res, next) {
+  User.get(req.params.userid, function (err, user) {
+    if (err) return next(err);
+    
+    user.getSimilarMovies(function (err, movies) {
+      if (err) return next(err);
+
+      res.json(movies.map(function(movie){
+        return movie.properties;
+      }));
+    });
+  });
+});
+
+app.get('/users/:userid/friendsMovies', function(req, res, next) {
+  User.get(req.params.userid, function (err, user) {
+    if (err) return next(err);
+    
+    user.getFriendsMovies(function (err, movies) {
+      if (err) return next(err);
+
+      res.json(movies.map(function(movie){
+        return movie.properties;
+      }));
+    });
+  });
+});
+
 
 app.listen(process.env.PORT || 8000);

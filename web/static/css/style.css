@@ -1,0 +1,4 @@
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+.movielist 		{ list-style-type: none; white-space: nowrap; overflow-x: auto; padding: 0; }
+.movielist li  	{ display: inline-block; height: 330px; width: 250px;}

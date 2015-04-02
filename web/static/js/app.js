@@ -4,8 +4,9 @@
 
 var moviesApp = angular.module('moviesApp', [
   'ngRoute',
-
-  'moviesControllers'
+  'moviesControllers',
+  'moviesDirectives',
+  'ui.bootstrap'
 ]);
 
 moviesApp.config(['$routeProvider',
@@ -35,3 +36,4 @@ moviesApp.run(function($rootScope, $location) {
       }
     });
   });
+

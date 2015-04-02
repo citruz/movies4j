@@ -88,9 +88,9 @@ Movie.prototype.addRating = function (user, stars, comment, callback) {
 
 Movie.get = function (id, callback) {
     db.cypher({
-        query: 'MATCH (movie:Movie {id: {id}}) RETURN movie',
+        query: 'MATCH (movie:Movie) WHERE ID(movie) = {id} RETURN movie',
         params: {
-            id: id
+            id: parseInt(id)
         },
     }, function (err, results) {
       if (err) return callback(err);

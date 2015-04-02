@@ -40,6 +40,42 @@ moviesControllers.controller('MainCtrl', ['$scope', '$rootScope', '$location', '
     }
     getFriends();
 
+    //Get movies
+    var getMovies = function() {
+      $http.get(rootURL+'/users/'+$rootScope.user.id+'/friends').
+      success(function(data, status, headers, config) {
+        $scope.movies = data;
+      }).
+      error(function(data, status, headers, config) {
+        alert('Error loading movies.');
+      });
+    }
+    getMovies();
+
+    //Get similar movies
+    var getSimilarMovies = function() {
+      $http.get(rootURL+'/users/'+$rootScope.user.id+'/similarMovies').
+      success(function(data, status, headers, config) {
+        $scope.similarMovies = data;
+      }).
+      error(function(data, status, headers, config) {
+        alert('Error loading similarmovies.');
+      });
+    }
+    getSimilarMovies();
+
+    //Get friends movies
+    var getFriendsMovies = function() {
+      $http.get(rootURL+'/users/'+$rootScope.user.id+'/friendsMovies').
+      success(function(data, status, headers, config) {
+        $scope.friendsMovies = data;
+      }).
+      error(function(data, status, headers, config) {
+        alert('Error loading friends movies.');
+      });
+    }
+    getFriendsMovies();
+
     $scope.logout = function() {
       $rootScope.user = null;
       $location.path('/login');
@@ -74,6 +110,28 @@ moviesControllers.controller('MainCtrl', ['$scope', '$rootScope', '$location', '
         success(function(data, status, headers, config) {
           $scope.moviesearch = data;
         })
-    }
+    };
+
+    $scope.rateMovie = function(movie) {
+      $scope.selectedMovie = movie;
+      $scope.newRating = {};
+      $('#rate-modal').modal('show');
+      return false;
+    };
+    $scope.hoveringOver = function(value) {
+      $scope.overStar = value;
+      $scope.percent = 100 * (value / 5);
+    };
+    $scope.submitRating = function(movie, rating) {
+      var submit = $.extend(rating, {user: $rootScope.user.name});
+      $http.post(rootURL+'/movies/'+$scope.selectedMovie.id+'/ratings', submit).
+        success(function(data, status, headers, config) {
+          $('#rate-modal').modal('hide');
+          getMovies();
+        }).
+        error(function(data, status, headers, config) {
+          alert('Error saving rating.');
+        }); 
+    };
 
   }]);

@@ -76,6 +76,54 @@ User.prototype.getFriends = function (callback) {
 	
 
 };
+
+User.prototype.getSimilarMovies = function (callback) {
+    var query = [
+        'MATCH (me:User)-[r1:RATED]->(m:Movie)<-[r2:RATED]-(u:User)-[r3:RATED]->(m2:Movie)',
+        'WHERE ID(me) = {userid} AND r1.stars > 3 AND r2.stars > 3 AND r3.stars > 3 AND NOT (me)-[:RATED]->(m2)',
+        'return distinct m2 AS movie, count(*) AS count',
+        'Order BY count DESC',
+        'LIMIT 10'
+    ].join('\n');
+    db.cypher({
+        query: query,
+        params: {
+            userid: this.id
+        },
+    }, function (err, results) {
+        if (err) return callback(err);
+        console.log(results);
+
+        var users = results.map(function (result) {
+            return new User(result['movie']);
+        });
+        callback(null, users);
+    });   
+};
+
+User.prototype.getFriendsMovies = function (callback) {
+    var query = [
+        'MATCH (me:User)-[:FRIEND]-(f), (f)-[r:RATED]-(m:Movie)',
+        'WHERE ID(me) = {userid} AND r.stars > 3 AND NOT (me)-[:RATED]->(m)', 
+        'return distinct m AS movie, count(*) AS count',
+        'Order BY count DESC',
+        'LIMIT 10'
+    ].join('\n');
+    db.cypher({
+        query: query,
+        params: {
+            userid: this.id
+        },
+    }, function (err, results) {
+        if (err) return callback(err);
+        console.log(results);
+
+        var users = results.map(function (result) {
+            return new User(result['movie']);
+        });
+        callback(null, users);
+    });   
+}
 // static methods:
 
 User.get = function (id, callback) {
