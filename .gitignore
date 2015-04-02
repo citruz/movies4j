@@ -1,6 +1,6 @@
 bower_components
 
-web/static/components/
+static/components/
 
 # Logs
 logs

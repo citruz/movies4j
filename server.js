@@ -1,5 +1,9 @@
 var express = require('express');
+var morgan = require('morgan');
 var app = express();
+
+app.use(express.static(__dirname + '/static'));
+app.use(morgan('combined'))
 
 var Movie = require('./models/movie');
 var User = require('./models/user');
