@@ -29,7 +29,7 @@ moviesControllers.controller('MainCtrl', ['$scope', '$rootScope', '$location', '
   function($scope, $rootScope, $location, $http) {
 
     //Get friends
-    var getFriends = function() {
+    $scope.getFriends = function() {
       $http.get(rootURL+'/users/'+$rootScope.user.id+'/friends').
       success(function(data, status, headers, config) {
         $scope.friends = data;
@@ -38,10 +38,11 @@ moviesControllers.controller('MainCtrl', ['$scope', '$rootScope', '$location', '
         alert('Error loading friends.');
       });
     }
-    getFriends();
+    $scope.getFriends();
 
     //Get movies
-    var getMovies = function() {
+    //TODO
+    $scope.getMovies = function() {
       $http.get(rootURL+'/users/'+$rootScope.user.id+'/friends').
       success(function(data, status, headers, config) {
         $scope.movies = data;
@@ -50,10 +51,10 @@ moviesControllers.controller('MainCtrl', ['$scope', '$rootScope', '$location', '
         alert('Error loading movies.');
       });
     }
-    getMovies();
+    $scope.getMovies();
 
     //Get similar movies
-    var getSimilarMovies = function() {
+    $scope.getSimilarMovies = function() {
       $http.get(rootURL+'/users/'+$rootScope.user.id+'/similarMovies').
       success(function(data, status, headers, config) {
         $scope.similarMovies = data;
@@ -62,10 +63,10 @@ moviesControllers.controller('MainCtrl', ['$scope', '$rootScope', '$location', '
         alert('Error loading similarmovies.');
       });
     }
-    getSimilarMovies();
+    $scope.getSimilarMovies();
 
     //Get friends movies
-    var getFriendsMovies = function() {
+    $scope.getFriendsMovies = function() {
       $http.get(rootURL+'/users/'+$rootScope.user.id+'/friendsMovies').
       success(function(data, status, headers, config) {
         $scope.friendsMovies = data;
@@ -74,7 +75,7 @@ moviesControllers.controller('MainCtrl', ['$scope', '$rootScope', '$location', '
         alert('Error loading friends movies.');
       });
     }
-    getFriendsMovies();
+    $scope.getFriendsMovies();
 
     $scope.logout = function() {
       $rootScope.user = null;

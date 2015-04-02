@@ -11,10 +11,10 @@
   <div class="col-md-9">
     <div class="tab-content">
       <div class="tab-pane active" id="home">
-        <h3>Recommendations based on my ratings</h3>
+        <h3>Recommendations based on my ratings <button class="btn btn-default" ng-click="getSimilarMovies()"><span class="glyphicon glyphicon-refresh"></span></button></h3>
         <div movielist movies="similarMovies"></div>
 
-        <h3>Recommendations based on my friends</h3>
+        <h3>Recommendations based on my friends <button class="btn btn-default" ng-click="getFriendsMovies()"><span class="glyphicon glyphicon-refresh"></span></button></h3>
         <div movielist movies="friendsMovies"></div>
 
       </div>
@@ -22,6 +22,7 @@
 
       <div class="tab-pane" id="friends">
         <h3>My Friends</h3>
+        <alert ng-if="friends == null || friends.length == 0" type="info">You don't have any friends yet.</alert>
         <ul>
           <li ng-repeat="friend in friends">{{friend.name}}</li>
         </ul>
@@ -38,6 +39,7 @@
 
       <div class="tab-pane" id="movies">
         <h3>My Ratings</h3>
+        <alert ng-if="friends == null || friends.length == 0" type="info">You don't have rated any movies yet.</alert>
         <ul>
           <li ng-repeat="movie in movies">{{movie.title}}</li>
         </ul>
@@ -48,7 +50,7 @@
         </div>
         <div class="list-group">
           <a ng-repeat="movie in moviesearch" class="list-group-item" ng-click="rateMovie(movie)" href>
-            <img src="http://img.omdbapi.com/?i={{movie.imdbId}}&apikey=ee8796c8&h=150" />
+            <img ng-src="http://img.omdbapi.com/?i={{movie.imdbId}}&apikey=ee8796c8&h=150" />
             {{movie.title}}
           </a>
         </div>
