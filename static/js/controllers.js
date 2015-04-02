@@ -4,7 +4,7 @@
 
 var moviesControllers = angular.module('moviesControllers', []);
 
-var rootURL = "http://localhost:8000";
+var rootURL = "http://localhost:8000/api";
 
 moviesControllers.controller('LoginCtrl', ['$scope', '$location', '$rootScope', '$http',
   function($scope, $location, $rootScope, $http) {

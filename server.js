@@ -24,7 +24,7 @@ var allowCrossDomain = function(req, res, next) {
 }
 app.use(allowCrossDomain);
 
-app.get('/movies', function(req, res, next) {
+app.get('/api/movies', function(req, res, next) {
 
   Movie.getAll(200, function (err, movies) {
       if (err) return next(err);
@@ -37,7 +37,7 @@ app.get('/movies', function(req, res, next) {
   
 });
 
-app.get('/movies/search', function(req, res, next) {
+app.get('/api/movies/search', function(req, res, next) {
   console.log(req.query.q);
   Movie.search(req.query.q, function (err, movies) {
       if (err) return next(err);
@@ -48,7 +48,7 @@ app.get('/movies/search', function(req, res, next) {
   
 });
 
-app.post('/movies/:id/ratings', function(req, res, next) {
+app.post('/api/movies/:id/ratings', function(req, res, next) {
   if(!req.body.hasOwnProperty('stars') || !req.body.hasOwnProperty('comment') || !req.body.hasOwnProperty('user')) {
     res.statusCode = 400;
     return res.send('Error 400: Post syntax incorrect.');
@@ -68,7 +68,7 @@ app.post('/movies/:id/ratings', function(req, res, next) {
   });
 });
 
-app.get('/users/:id/friends', function(req, res, next) {
+app.get('/api/users/:id/friends', function(req, res, next) {
 	User.get(req.params.id, function (err, user) {
 		if (err) return next(err);
 		
@@ -82,7 +82,7 @@ app.get('/users/:id/friends', function(req, res, next) {
 	
 });
 
-app.post('/users', function(req, res, next) {
+app.post('/api/users', function(req, res, next) {
 	if(!req.body.hasOwnProperty('username')) {
 		res.statusCode = 400;
 		return res.send('Error 400: Post syntax incorrect.');
@@ -103,7 +103,7 @@ app.post('/users', function(req, res, next) {
 	
 });
 
-app.get('/users/search', function(req, res, next) {
+app.get('/api/users/search', function(req, res, next) {
   console.log(req.query.q);
   User.search(req.query.q, function (err, users) {
       if (err) return next(err);
@@ -115,7 +115,7 @@ app.get('/users/search', function(req, res, next) {
   
 });
 
-app.post('/users/:userid/friends/:friendid', function(req, res, next) {
+app.post('/api/users/:userid/friends/:friendid', function(req, res, next) {
 	var userid = req.params.userid;
 	var friendid = req.params.friendid;
 	User.get(userid, function (err, user) {
@@ -129,7 +129,7 @@ app.post('/users/:userid/friends/:friendid', function(req, res, next) {
 	
 });
 
-app.get('/users/:userid/similarMovies', function(req, res, next) {
+app.get('/api/users/:userid/similarMovies', function(req, res, next) {
   User.get(req.params.userid, function (err, user) {
     if (err) return next(err);
     
@@ -143,7 +143,7 @@ app.get('/users/:userid/similarMovies', function(req, res, next) {
   });
 });
 
-app.get('/users/:userid/friendsMovies', function(req, res, next) {
+app.get('/api/users/:userid/friendsMovies', function(req, res, next) {
   User.get(req.params.userid, function (err, user) {
     if (err) return next(err);
     
