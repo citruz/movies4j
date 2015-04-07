@@ -59,14 +59,13 @@ moviesControllers.controller('RecommendationsCtrl', ['$scope', '$rootScope', '$l
 moviesControllers.controller('MoviesCtrl', ['$scope', '$rootScope', '$location', '$http',
   function($scope, $rootScope, $location, $http, $cookieStore) {
     //Get movies
-    //TODO
     $scope.getMovies = function() {
-      $http.get(rootURL+'/users/'+$rootScope.user.id+'/friends').
+      $http.get(rootURL+'/users/'+$rootScope.user.id+'/ratings').
       success(function(data, status, headers, config) {
-        $scope.movies = data;
+        $scope.ratings = data;
       }).
       error(function(data, status, headers, config) {
-        alert('Error loading movies.');
+        alert('Error loading ratings.');
       });
     }
     $scope.getMovies();
@@ -86,7 +85,7 @@ moviesControllers.controller('MoviesCtrl', ['$scope', '$rootScope', '$location',
 
     $scope.rateMovie = function(movie) {
       $scope.selectedMovie = movie;
-      $scope.newRating = {};
+      $scope.newRating = { stars: undefined, comment: ''};
       $('#rate-modal').modal('show');
       return false;
     };
@@ -99,10 +98,19 @@ moviesControllers.controller('MoviesCtrl', ['$scope', '$rootScope', '$location',
       $http.post(rootURL+'/movies/'+$scope.selectedMovie.id+'/ratings', submit).
         success(function(data, status, headers, config) {
           $('#rate-modal').modal('hide');
-          getMovies();
+          $scope.getMovies();
         }).
         error(function(data, status, headers, config) {
           alert('Error saving rating.');
+        }); 
+    };
+    $scope.removeRating = function(movie) {
+      $http.delete(rootURL+'/users/'+$rootScope.user.id+'/ratings/'+movie.id).
+        success(function(data, status, headers, config) {
+          $scope.getMovies();
+        }).
+        error(function(data, status, headers, config) {
+          alert('Error deleting rating.');
         }); 
     };
 
@@ -137,6 +145,13 @@ moviesControllers.controller('FriendsCtrl', ['$scope', '$rootScope', '$location'
           $scope.getFriends();
           $scope.friendSearchName = '';
           $scope.friendsearch = [];
+        });
+      return false;
+    }
+    $scope.removeFriend = function(friend) {
+      $http.delete(rootURL+'/users/'+$rootScope.user.id+'/friends/'+friend.id).
+        success(function(data, status, headers, config) {
+          $scope.getFriends();
         });
       return false;
     }

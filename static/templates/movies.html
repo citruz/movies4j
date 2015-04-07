@@ -1,9 +1,21 @@
 <div class="col-md-9">
   <h3>My Ratings</h3>
-  <alert ng-if="friends == null || friends.length == 0" type="info">You don't have rated any movies yet.</alert>
-  <ul>
-    <li ng-repeat="movie in movies">{{movie.title}}</li>
-  </ul>
+  <alert ng-if="ratings == null || ratings.length == 0" type="info">You don't have rated any movies yet.</alert>
+
+  <div class="media" ng-repeat="rating in ratings">
+    <div class="media-left ">
+      <a href="http://imdb.com/title/{{rating.movie.imdbId}}/" target="_blank">
+        <img class="media-object" ng-src="http://img.omdbapi.com/?i={{rating.movie.imdbId}}&apikey=ee8796c8&h=100"  alt="{{rating.movie.title}}">
+      </a>
+    </div>
+    <div class="media-body media-middle">
+      <h4 class="media-heading"><a href="http://imdb.com/title/{{rating.movie.imdbId}}/" target="_blank">{{rating.movie.title}}</a></h4>
+      <rating ng-model="rating.stars" max="5" readonly="true"></rating>{{rating.comment}}
+      <p>
+        <a href ng-click="removeRating(rating.movie)">Remove</a>
+      </p>
+    </div>
+  </div>
 
   <h3>Rate Movie</h3>
   <div class="input-group">

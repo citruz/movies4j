@@ -1,6 +1,7 @@
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase('http://neo4j:neo5j@localhost:7474');
 var _ = require('underscore');
+var Movie = require('./movie.js');
 
 // private constructor:
 
@@ -138,6 +139,44 @@ User.prototype.addFriend = function (friend, callback) {
     callback(null, friend);
   });
 }
+User.prototype.removeFriend = function (friend, callback) {
+  db.cypher({
+    query: 'MATCH (a:User)-[r:FRIEND]-(b:User) WHERE ID(a)={ida} AND ID(b)={idb} DELETE r',
+    params: {
+      ida: this.id,
+      idb: friend.id          
+    }
+  }, function (err, results) {
+    if (err) return callback(err);
+
+    console.log(friend);
+    callback(null, friend);
+  });
+}
+
+User.prototype.getRatings = function(callback) {
+    db.cypher({
+    query: 'MATCH (n:User)-[r:RATED]->(movie:Movie) WHERE ID(n)={id} return r, movie',
+    params: {
+      id: this.id
+    },
+  }, function (err, results) {
+    if (err) return callback(err);
+    console.log(results);
+
+    var ratingsAndMovies = results.map(function (result) {
+      return { 
+        stars: result['r'].properties.stars, 
+        comment: result['r'].properties.comment, 
+        movie: new Movie(result['movie']).properties
+      };
+    });
+    console.log(ratingsAndMovies);
+    callback(null, ratingsAndMovies);
+  });
+  
+}
+
 // static methods:
 
 User.get = function (id, callback) {

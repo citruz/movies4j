@@ -2,7 +2,7 @@
   <h3>My Friends</h3>
   <alert ng-if="friends == null || friends.length == 0" type="info">You don't have any friends yet.</alert>
   <ul>
-    <li ng-repeat="friend in friends">{{friend.name}}</li>
+    <li ng-repeat="friend in friends">{{friend.name}} <a ng-click="removeFriend(friend)" href>Remove</a></li>
   </ul>
 
   <h3>Add Friend</h3>

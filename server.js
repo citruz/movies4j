@@ -68,6 +68,22 @@ app.post('/api/movies/:id/ratings', function(req, res, next) {
   });
 });
 
+app.delete('/api/users/:userId/ratings/:movieId', function(req, res, next) {
+  User.get(req.params.userId, function (err, user) {
+    if (err) return next(err);
+
+    Movie.get(req.params.movieId, function (err, movie) {
+      if (err) return next(err);
+
+      movie.removeRating(user, function (err, result) {
+          if (err) return next(err);
+
+          res.json(result);
+      });
+    });
+  });
+});
+
 app.get('/api/users/:id/friends', function(req, res, next) {
   User.get(req.params.id, function (err, user) {
     if (err) return next(err);
@@ -77,6 +93,19 @@ app.get('/api/users/:id/friends', function(req, res, next) {
       res.json(friends.map(function(friend) {
         return friend.properties;
       }));
+    });
+  });
+  
+});
+
+app.get('/api/users/:id/ratings', function(req, res, next) {
+  User.get(req.params.id, function (err, user) {
+    if (err) return next(err);
+    
+    user.getRatings(function (err, ratingsAndMovies) {
+      if (err) return next(err);
+
+      res.json(ratingsAndMovies);
     });
   });
   
@@ -125,6 +154,25 @@ app.post('/api/users/:userid/friends/:friendid', function(req, res, next) {
         if (err) return next(err);
 
         user.addFriend(friend,function (err, friend) {
+          if (err) return next(err);
+
+          res.json(friend.properties);
+        });  
+      });
+  });
+  
+});
+
+app.delete('/api/users/:userid/friends/:friendid', function(req, res, next) {
+  var userid = req.params.userid;
+  var friendid = req.params.friendid;
+  User.get(userid, function (err, user) {
+    if (err) return next(err);
+    
+      User.get(friendid, function (err, friend) {
+        if (err) return next(err);
+
+        user.removeFriend(friend,function (err, friend) {
           if (err) return next(err);
 
           res.json(friend.properties);

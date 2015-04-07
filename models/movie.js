@@ -82,7 +82,25 @@ Movie.prototype.addRating = function (user, stars, comment, callback) {
         callback(null, results);
     });
 };
+Movie.prototype.removeRating = function (user, callback) {
+    var query = [
+        'MATCH (u:User)-[r:RATED]-(m:Movie)',
+        'WHERE ID(u) = {userid} AND ID(m) = {movieid}',
+        'DELETE r'
+    ].join('\n');
 
+    db.cypher({
+        query: query,
+        params: {
+            userid: user.id,
+            movieid: this.id
+        },
+    }, function (err, results) {
+        if (err) return callback(err);
+
+        callback(null, results);
+    });
+};
 
 // static methods:
 
@@ -118,7 +136,7 @@ Movie.getAll = function (limit, callback) {
 Movie.search = function (title, callback) {
     title = '.*'+title+'.*';
     db.cypher({
-        query: 'MATCH (movie:Movie) WHERE movie.title =~ {title} RETURN movie ORDER BY movie.title',
+        query: 'MATCH (movie:Movie) WHERE LOWER(movie.title) =~ LOWER({title}) RETURN movie ORDER BY movie.title',
         params: {
             title: title
         },
