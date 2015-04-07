@@ -1,0 +1,15 @@
+<div class="col-md-9">
+  <h3>My Friends</h3>
+  <alert ng-if="friends == null || friends.length == 0" type="info">You don't have any friends yet.</alert>
+  <ul>
+    <li ng-repeat="friend in friends">{{friend.name}}</li>
+  </ul>
+
+  <h3>Add Friend</h3>
+  <div class="input-group">
+    <input type="text" ng-change="searchFriends()" ng-model="friendSearchName" class="form-control"></input><div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="friend in friendsearch" class="list-group-item" ng-click="addFriend(friend)" href>{{friend.name}}</a>
+  </div>
+</div>

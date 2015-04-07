@@ -1,100 +1,13 @@
-<div class="row">
 
-  <div class="col-md-3">
-    <ul class="nav nav-pills nav-stacked" id="myTabs">
-      <li class="active"><a href="#home">Recommendations</a></li>
-      <li><a href="#friends">Friends</a></li>
-      <li><a href="#movies">Movies</a></li>
-    </ul>
-  </div>
+<div class="col-md-9">
+  <h3>Recommendations based on my ratings <button class="btn btn-default" ng-click="getSimilarMovies()"><span class="glyphicon glyphicon-refresh"></span></button></h3>
 
-  <div class="col-md-9">
-    <div class="tab-content">
-      <div class="tab-pane active" id="home">
-        <h3>Recommendations based on my ratings <button class="btn btn-default" ng-click="getSimilarMovies()"><span class="glyphicon glyphicon-refresh"></span></button></h3>
-        <div movielist movies="similarMovies"></div>
-
-        <h3>Recommendations based on my friends <button class="btn btn-default" ng-click="getFriendsMovies()"><span class="glyphicon glyphicon-refresh"></span></button></h3>
-        <div movielist movies="friendsMovies"></div>
-
-      </div>
+  <alert ng-if="similarMovies == null || similarMovies.length == 0" type="info">Please rate movies to receive recommendations.</alert>
+  <div movielist movies="similarMovies"></div>
 
 
-      <div class="tab-pane" id="friends">
-        <h3>My Friends</h3>
-        <alert ng-if="friends == null || friends.length == 0" type="info">You don't have any friends yet.</alert>
-        <ul>
-          <li ng-repeat="friend in friends">{{friend.name}}</li>
-        </ul>
+  <h3>Recommendations based on my friends <button class="btn btn-default" ng-click="getFriendsMovies()"><span class="glyphicon glyphicon-refresh"></span></button></h3>
 
-        <h3>Add Friend</h3>
-        <div class="input-group">
-          <input type="text" ng-change="searchFriends()" ng-model="friendSearchName" class="form-control"></input><div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
-        </div>
-        <div class="list-group">
-          <a ng-repeat="friend in friendsearch" class="list-group-item" ng-click="addFriend(friend)" href>{{friend.name}}</a>
-        </div>
-      </div>
-      
-
-      <div class="tab-pane" id="movies">
-        <h3>My Ratings</h3>
-        <alert ng-if="friends == null || friends.length == 0" type="info">You don't have rated any movies yet.</alert>
-        <ul>
-          <li ng-repeat="movie in movies">{{movie.title}}</li>
-        </ul>
-
-        <h3>Rate Movie</h3>
-        <div class="input-group">
-          <input type="text" ng-change="searchMovies()" ng-model="movieSearchTitle" class="form-control"></input><div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
-        </div>
-        <div class="list-group">
-          <a ng-repeat="movie in moviesearch" class="list-group-item" ng-click="rateMovie(movie)" href>
-            <img ng-src="http://img.omdbapi.com/?i={{movie.imdbId}}&apikey=ee8796c8&h=150" />
-            {{movie.title}}
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
+  <alert ng-if="friendsMovies == null || friendsMovies.length == 0" type="info">Please add friends to receive recommendations.</alert>
+  <div movielist movies="friendsMovies"></div>
 </div>
-
-<div class="modal fade" id="rate-modal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form class="form-horizontal" ng-submit="submitRating(movie, newRating)">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Rate "{{selectedMovie.title}}"</h4>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Rating</label>
-            <div class="col-sm-10">
-              <rating ng-model="newRating.stars" max="5" readonly="false" on-hover="hoveringOver(value)" on-leave="overStar = null"></rating>
-              <span class="label" ng-class="{'label-warning': percent<30, 'label-info': percent>=30 && percent<70, 'label-success': percent>=70}" ng-show="overStar">{{percent}}%</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="inputComment" class="col-sm-2 control-label">Comment</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" id="inputComment" placeholder="Comment" ng-model="newRating.comment">
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <input type="submit" class="btn btn-primary" value="Save changes">
-        </div>
-      </form>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<script type="text/javascript">
-  $('#myTabs a').click(function (e) {
-    e.preventDefault()
-    $(this).tab('show')
-  });
-</script>

@@ -1,0 +1,50 @@
+<div class="col-md-9">
+  <h3>My Ratings</h3>
+  <alert ng-if="friends == null || friends.length == 0" type="info">You don't have rated any movies yet.</alert>
+  <ul>
+    <li ng-repeat="movie in movies">{{movie.title}}</li>
+  </ul>
+
+  <h3>Rate Movie</h3>
+  <div class="input-group">
+    <input type="text" ng-change="searchMovies()" ng-model="movieSearchTitle" class="form-control"></input><div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="movie in moviesearch" class="list-group-item" ng-click="rateMovie(movie)" href>
+      <img ng-src="http://img.omdbapi.com/?i={{movie.imdbId}}&apikey=ee8796c8&h=150" />
+      {{movie.title}}
+    </a>
+  </div>
+</div>
+
+<div class="modal fade" id="rate-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form class="form-horizontal" ng-submit="submitRating(movie, newRating)">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Rate "{{selectedMovie.title}}"</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Rating</label>
+            <div class="col-sm-10">
+              <rating ng-model="newRating.stars" max="5" readonly="false" on-hover="hoveringOver(value)" on-leave="overStar = null"></rating>
+              <span class="label" ng-class="{'label-warning': percent<30, 'label-info': percent>=30 && percent<70, 'label-success': percent>=70}" ng-show="overStar">{{percent}}%</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputComment" class="col-sm-2 control-label">Comment</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="inputComment" placeholder="Comment" ng-model="newRating.comment">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <input type="submit" class="btn btn-primary" value="Save changes">
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

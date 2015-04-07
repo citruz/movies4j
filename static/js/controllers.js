@@ -4,10 +4,10 @@
 
 var moviesControllers = angular.module('moviesControllers', []);
 
-var rootURL = "http://localhost:8000/api";
+var rootURL = "/api";
 
-moviesControllers.controller('LoginCtrl', ['$scope', '$location', '$rootScope', '$http',
-  function($scope, $location, $rootScope, $http) {
+moviesControllers.controller('LoginCtrl', ['$scope', '$location', '$rootScope', '$http', '$cookieStore',
+  function($scope, $location, $rootScope, $http, $cookieStore) {
 
     $scope.login = function() {
       if ($scope.username.trim() == '') return;
@@ -15,6 +15,10 @@ moviesControllers.controller('LoginCtrl', ['$scope', '$location', '$rootScope', 
       $http.post(rootURL+'/users', {username: $scope.username}).
         success(function(data, status, headers, config) {
           $rootScope.user = data;
+
+          $cookieStore.put('movies4jUser', data.name);
+          $cookieStore.put('movies4jUserId', data.id+'');
+
           $location.path("/");
         }).
         error(function(data, status, headers, config) {
@@ -25,34 +29,8 @@ moviesControllers.controller('LoginCtrl', ['$scope', '$location', '$rootScope', 
 
   }]);
 
-moviesControllers.controller('MainCtrl', ['$scope', '$rootScope', '$location', '$http',
-  function($scope, $rootScope, $location, $http) {
-
-    //Get friends
-    $scope.getFriends = function() {
-      $http.get(rootURL+'/users/'+$rootScope.user.id+'/friends').
-      success(function(data, status, headers, config) {
-        $scope.friends = data;
-      }).
-      error(function(data, status, headers, config) {
-        alert('Error loading friends.');
-      });
-    }
-    $scope.getFriends();
-
-    //Get movies
-    //TODO
-    $scope.getMovies = function() {
-      $http.get(rootURL+'/users/'+$rootScope.user.id+'/friends').
-      success(function(data, status, headers, config) {
-        $scope.movies = data;
-      }).
-      error(function(data, status, headers, config) {
-        alert('Error loading movies.');
-      });
-    }
-    $scope.getMovies();
-
+moviesControllers.controller('RecommendationsCtrl', ['$scope', '$rootScope', '$location', '$http',
+  function($scope, $rootScope, $location, $http, $cookieStore) {
     //Get similar movies
     $scope.getSimilarMovies = function() {
       $http.get(rootURL+'/users/'+$rootScope.user.id+'/similarMovies').
@@ -76,29 +54,22 @@ moviesControllers.controller('MainCtrl', ['$scope', '$rootScope', '$location', '
       });
     }
     $scope.getFriendsMovies();
+  }]);
 
-    $scope.logout = function() {
-      $rootScope.user = null;
-      $location.path('/login');
-      return false;
+moviesControllers.controller('MoviesCtrl', ['$scope', '$rootScope', '$location', '$http',
+  function($scope, $rootScope, $location, $http, $cookieStore) {
+    //Get movies
+    //TODO
+    $scope.getMovies = function() {
+      $http.get(rootURL+'/users/'+$rootScope.user.id+'/friends').
+      success(function(data, status, headers, config) {
+        $scope.movies = data;
+      }).
+      error(function(data, status, headers, config) {
+        alert('Error loading movies.');
+      });
     }
-
-    $scope.searchFriends = function() {
-      $http.get(rootURL+'/users/search?q='+$scope.friendSearchName).
-        success(function(data, status, headers, config) {
-          $scope.friendsearch = data.filter(function(friend) {
-            return (friend.id != $rootScope.user.id);
-          });
-        })
-    }
-
-    $scope.addFriend = function(friend) {
-      $http.post(rootURL+'/users/'+$rootScope.user.id+'/friends/'+friend.id).
-        success(function(data, status, headers, config) {
-          getFriends();
-        });
-      return false;
-    }
+    $scope.getMovies();
 
     $scope.searchMovies = function() {
       if ($scope.movieSearchTitle.length == 0) {
@@ -134,5 +105,40 @@ moviesControllers.controller('MainCtrl', ['$scope', '$rootScope', '$location', '
           alert('Error saving rating.');
         }); 
     };
+
+  }]);
+
+moviesControllers.controller('FriendsCtrl', ['$scope', '$rootScope', '$location', '$http',
+  function($scope, $rootScope, $location, $http, $cookieStore) {
+    //Get friends
+    $scope.getFriends = function() {
+      $http.get(rootURL+'/users/'+$rootScope.user.id+'/friends').
+      success(function(data, status, headers, config) {
+        $scope.friends = data;
+      }).
+      error(function(data, status, headers, config) {
+        alert('Error loading friends.');
+      });
+    }
+    $scope.getFriends();
+
+    $scope.searchFriends = function() {
+      $http.get(rootURL+'/users/search?q='+$scope.friendSearchName).
+        success(function(data, status, headers, config) {
+          $scope.friendsearch = data.filter(function(friend) {
+            return (friend.id != $rootScope.user.id);
+          });
+        })
+    }
+
+    $scope.addFriend = function(friend) {
+      $http.post(rootURL+'/users/'+$rootScope.user.id+'/friends/'+friend.id).
+        success(function(data, status, headers, config) {
+          $scope.getFriends();
+          $scope.friendSearchName = '';
+          $scope.friendsearch = [];
+        });
+      return false;
+    }
 
   }]);

@@ -69,24 +69,24 @@ app.post('/api/movies/:id/ratings', function(req, res, next) {
 });
 
 app.get('/api/users/:id/friends', function(req, res, next) {
-	User.get(req.params.id, function (err, user) {
-		if (err) return next(err);
-		
-		user.getFriends(function (err, friends) {
-			if (err) return next(err);
-			res.json(friends.map(function(friend) {
-				return friend.properties;
-			}));
-		});
-	});
-	
+  User.get(req.params.id, function (err, user) {
+    if (err) return next(err);
+    
+    user.getFriends(function (err, friends) {
+      if (err) return next(err);
+      res.json(friends.map(function(friend) {
+        return friend.properties;
+      }));
+    });
+  });
+  
 });
 
 app.post('/api/users', function(req, res, next) {
-	if(!req.body.hasOwnProperty('username')) {
-		res.statusCode = 400;
-		return res.send('Error 400: Post syntax incorrect.');
-	}
+  if(!req.body.hasOwnProperty('username')) {
+    res.statusCode = 400;
+    return res.send('Error 400: Post syntax incorrect.');
+  }
   User.getByName(req.body.username, function (err, user) {
     if (err) return next(err);
 
@@ -100,7 +100,7 @@ app.post('/api/users', function(req, res, next) {
     }
   });
 
-	
+  
 });
 
 app.get('/api/users/search', function(req, res, next) {
@@ -116,17 +116,22 @@ app.get('/api/users/search', function(req, res, next) {
 });
 
 app.post('/api/users/:userid/friends/:friendid', function(req, res, next) {
-	var userid = req.params.userid;
-	var friendid = req.params.friendid;
-	User.get(userid, function (err, user) {
-		if (err) return next(err);
-		
-		user.setFriend(userid, friendid,function (err, friend) {
-			if (err) return next(err);
-			res.json(friend.properties);
-		});
-	});
-	
+  var userid = req.params.userid;
+  var friendid = req.params.friendid;
+  User.get(userid, function (err, user) {
+    if (err) return next(err);
+    
+      User.get(friendid, function (err, friend) {
+        if (err) return next(err);
+
+        user.addFriend(friend,function (err, friend) {
+          if (err) return next(err);
+
+          res.json(friend.properties);
+        });  
+      });
+  });
+  
 });
 
 app.get('/api/users/:userid/similarMovies', function(req, res, next) {
@@ -158,4 +163,6 @@ app.get('/api/users/:userid/friendsMovies', function(req, res, next) {
 });
 
 
-app.listen(process.env.PORT || 8000);
+var server = app.listen(process.env.PORT || 8000, function() {
+  console.log("Server listening on port %d.", server.address().port);
+});

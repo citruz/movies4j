@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <title>Movies4j</title>
 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link type="text/css" rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.css">    
     <link type="text/css" rel="stylesheet" href="css/style.css">
   </head>
@@ -16,17 +19,28 @@
             <div class="brand">Movies4j - The worlds leading Movie Recommendation Engine</div>
           </a>
         </div>
-        <p class="navbar-text navbar-right" ng-if="user != null">Signed in as {{user.name}} <a ng-click="logout()" ng-controller="MainCtrl" href="#">Logout</a></p>
+        <p class="navbar-text navbar-right" ng-if="user != null">Signed in as {{user.name}} | <a ng-click="logout()" href="#">Logout</a></p>
       </div>
     </div>
     <div class="container">
-      <div ng-view></div>
+      <div class="row">
+        <div class="col-md-3" ng-if="user">
+          <ul class="nav nav-pills nav-stacked">
+            <li ng-class="{active: location.path()=='/'}"><a href="#/">Recommendations</a></li>
+            <li ng-class="{active: location.path()=='/friends'}"><a href="#/friends">Friends</a></li>
+            <li ng-class="{active: location.path()=='/movies'}"><a href="#/movies">Movies</a></li>
+          </ul>
+        </div>
+
+        <div ng-view></div>
+      </div>
     </div>
 
     <script src="components/jquery/dist/jquery.js"></script>
     <script src="components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="components/angularjs/angular.js"></script>
     <script src="components/angular-route/angular-route.js"></script>
+    <script src="components/angular-cookies/angular-cookies.js"></script>
     <script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="js/app.js"></script>
     <script src="js/controllers.js"></script>
