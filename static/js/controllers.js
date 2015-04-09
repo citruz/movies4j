@@ -8,7 +8,6 @@ var rootURL = "/api";
 
 moviesControllers.controller('LoginCtrl', ['$scope', '$location', '$rootScope', '$http', '$cookieStore',
   function($scope, $location, $rootScope, $http, $cookieStore) {
-
     $scope.login = function() {
       if ($scope.username.trim() == '') return;
       

@@ -3,14 +3,12 @@ var db = new neo4j.GraphDatabase('http://neo4j:neo5j@localhost:7474');
 var _ = require('underscore');
 var Movie = require('./movie.js');
 
-// private constructor:
-
+// Private Constructor:
 var User = module.exports = function User(_node) {
   this._node = _node;
 }
 
-// public instance properties:
-
+// Public Properties:
 Object.defineProperty(User.prototype, 'id', {
   get: function () { return this._node._id; }
 });
@@ -28,8 +26,7 @@ Object.defineProperty(User.prototype, 'properties', {
   get: function() { return _.extend(this._node.properties,{id: this._node._id}); }
 });
 
-// public instance methods:
-
+// Public Instance Methods:
 User.prototype.save = function (callback) {
   this._node.save(function (err) {
     callback(err);
@@ -37,10 +34,6 @@ User.prototype.save = function (callback) {
 };
 
 User.prototype.del = function (callback) {
-  // use a Cypher query to delete both this user and his/her following
-  // relationships in one transaction and one network request:
-  // (note that this'll still fail if there are any relationships attached
-  // of any other types, which is good because we don't expect any.)
   var query = [
     'MATCH (user:User)',
     'WHERE ID(user) = {userId}',
@@ -177,8 +170,8 @@ User.prototype.getRatings = function(callback) {
   
 }
 
-// static methods:
 
+// Public Class Methods:
 User.get = function (id, callback) {
   db.cypher({
     query: 'MATCH (user:User) WHERE ID(user)={id} RETURN user',

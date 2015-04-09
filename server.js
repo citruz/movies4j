@@ -16,16 +16,15 @@ app.use(bodyParser.json());
 app.use(methodOverride());
 
 var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    next();
+  next();
 }
 app.use(allowCrossDomain);
 
 app.get('/api/movies', function(req, res, next) {
-
   Movie.getAll(200, function (err, movies) {
       if (err) return next(err);
 
@@ -33,8 +32,7 @@ app.get('/api/movies', function(req, res, next) {
         return movie.properties;
       }));
 
-  });
-  
+  }); 
 });
 
 app.get('/api/movies/search', function(req, res, next) {
