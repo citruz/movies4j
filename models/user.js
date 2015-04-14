@@ -226,7 +226,7 @@ User.getByName = function (name, callback) {
 User.search = function (name, callback) {
   name = '.*'+name+'.*';
   db.cypher({
-    query: 'MATCH (user:User) WHERE user.name =~ {name} RETURN user',
+    query: 'MATCH (user:User) WHERE LOWER(user.name) =~ LOWER({name}) RETURN user',
     params: {
       name: name
     },
