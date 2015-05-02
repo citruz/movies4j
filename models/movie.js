@@ -1,6 +1,7 @@
 var neo4j = require('neo4j');
-var db = new neo4j.GraphDatabase('http://neo4j:neo5j@localhost:7474');
 var _ = require('underscore');
+var config = require('../config');
+var db = new neo4j.GraphDatabase(config.neo4jurl);
 
 // Private Constructor:
 var Movie = module.exports = function Movie(_node) {
@@ -68,9 +69,6 @@ Movie.prototype.addRating = function (user, stars, comment, callback) {
     },
   }, function (err, results) {
     if (err) return callback(err);
-
-    console.log("Add rating: ");
-    console.log(results);
 
     callback(null, results);
   });

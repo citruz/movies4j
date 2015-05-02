@@ -1,17 +1,18 @@
 var express = require('express');
 var morgan = require('morgan');
 var app = express();
+var bodyParser = require('body-parser')
+var methodOverride = require('method-override');
 
-app.use(express.static(__dirname + '/static'));
-app.use(morgan('combined'))
-
+var config = require('./config');
 var Movie = require('./models/movie');
 var User = require('./models/user');
 
-app.set('neo4j-url', 'http://neo4j:neo5j@localhost:7474');
 
-var bodyParser = require('body-parser')
-var methodOverride = require('method-override');
+
+app.use(express.static(__dirname + '/static'));
+app.use(morgan('combined'));
+
 app.use(bodyParser.json());
 app.use(methodOverride());
 
@@ -36,7 +37,6 @@ app.get('/api/movies', function(req, res, next) {
 });
 
 app.get('/api/movies/search', function(req, res, next) {
-  console.log(req.query.q);
   Movie.search(req.query.q, function (err, movies) {
       if (err) return next(err);
       res.json(movies.map(function(movie) {
@@ -131,7 +131,6 @@ app.post('/api/users', function(req, res, next) {
 });
 
 app.get('/api/users/search', function(req, res, next) {
-  console.log(req.query.q);
   User.search(req.query.q, function (err, users) {
       if (err) return next(err);
 
@@ -209,6 +208,6 @@ app.get('/api/users/:userid/friendsMovies', function(req, res, next) {
 });
 
 
-var server = app.listen(process.env.PORT || 8000, function() {
+var server = app.listen(process.env.PORT || config.port, function() {
   console.log("Server listening on port %d.", server.address().port);
 });

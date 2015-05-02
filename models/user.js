@@ -1,7 +1,8 @@
 var neo4j = require('neo4j');
-var db = new neo4j.GraphDatabase('http://neo4j:neo5j@localhost:7474');
 var _ = require('underscore');
 var Movie = require('./movie.js');
+var config = require('../config');
+var db = new neo4j.GraphDatabase(config.neo4jurl);
 
 // Private Constructor:
 var User = module.exports = function User(_node) {
@@ -60,7 +61,6 @@ User.prototype.getFriends = function (callback) {
     },
   }, function (err, results) {
     if (err) return callback(err);
-    console.log(results);
 
     var users = results.map(function (result) {
       return new User(result['friend']);
@@ -86,7 +86,6 @@ User.prototype.getSimilarMovies = function (callback) {
     },
   }, function (err, results) {
     if (err) return callback(err);
-    console.log(results);
 
     var users = results.map(function (result) {
       return new User(result['movie']);
@@ -110,7 +109,6 @@ User.prototype.getFriendsMovies = function (callback) {
     },
   }, function (err, results) {
     if (err) return callback(err);
-    console.log(results);
 
     var users = results.map(function (result) {
       return new User(result['movie']);
@@ -128,7 +126,6 @@ User.prototype.addFriend = function (friend, callback) {
   }, function (err, results) {
     if (err) return callback(err);
 
-    console.log(friend);
     callback(null, friend);
   });
 }
@@ -142,7 +139,6 @@ User.prototype.removeFriend = function (friend, callback) {
   }, function (err, results) {
     if (err) return callback(err);
 
-    console.log(friend);
     callback(null, friend);
   });
 }
@@ -155,7 +151,6 @@ User.prototype.getRatings = function(callback) {
     },
   }, function (err, results) {
     if (err) return callback(err);
-    console.log(results);
 
     var ratingsAndMovies = results.map(function (result) {
       return { 
@@ -164,7 +159,6 @@ User.prototype.getRatings = function(callback) {
         movie: new Movie(result['movie']).properties
       };
     });
-    console.log(ratingsAndMovies);
     callback(null, ratingsAndMovies);
   });
   
@@ -213,7 +207,6 @@ User.getByName = function (name, callback) {
     }
   }, function (err, results) {
     if (err) return callback(err);
-    console.log(results);
 
     if (Array.isArray(results) && results.length > 0) {
       var user = new User(results[0]['user']);
@@ -248,7 +241,6 @@ User.create = function (name, callback) {
   }, function (err, results) {
     if (err) return callback(err);
     var user = new User(results[0]['user']);
-    console.log(results);
     callback(null, user);
   });
 };
