@@ -19,3 +19,25 @@ The application allows users to rate movies they like and add other users as the
 * Run `npm start` to start the server
 * Open your browser at [http://localhost:8000](http://localhost:8000)
 
+##Algorithms
+Probably one of the most interesting parts of the application are the algorithms that are used to determine recommendations. You can have a look at them in `models/user.js` (`getSimilarMovies` and `getFriendsMovies` are the important methods).
+
+###Similar Movies
+```
+MATCH (me:User)-[r1:RATED]->(m:Movie)<-[r2:RATED]-(u:User)-[r3:RATED]->(m2:Movie)
+WHERE ID(me) = {userid} AND r1.stars > 3 AND r2.stars > 3 AND r3.stars > 3 AND NOT (me)-[:RATED]->(m2)
+RETURN distinct m2 AS movie, count(*) AS count
+ORDER BY count DESC
+LIMIT 10
+````
+Explanation: Look for users who rated movies with three or more stars, that I have rated high as well. Which movies did these users liked additionally and I haven't seen yet?
+
+###Friends Movies
+```
+MATCH (me:User)-[:FRIEND]-(f), (f)-[r:RATED]-(m:Movie)
+WHERE ID(me) = {userid} AND r.stars > 3 AND NOT (me)-[:RATED]->(m)
+RETURN distinct m AS movie, count(*) AS count
+ORDER BY count DESC
+LIMIT 10
+````
+Explanation: From all of my friends, which movies did they rated high and I haven't seen yet?
